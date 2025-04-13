@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dish Recipes</title>
+</head>
+<body>
+  <h1>Dish Recipes</h1>
+  <form id="dish-form">
+    <input placeholder="Name" name="name" required>
+    <input placeholder="Ingredients (comma separated)" name="ingredients" required>
+    <input placeholder="Steps (comma separated)" name="preparationSteps" required>
+    <input placeholder="Cooking Time" name="cookingTime" required>
+    <input placeholder="Origin" name="origin" required>
+    <input placeholder="Spice Level" name="spiceLevel" required>
+    <button type="submit">Add Dish</button>
+  </form>
+
+  <table border="1" id="dish-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Origin</th>
+        <th>Spice Level</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const tableBody = document.querySelector("#dish-table tbody");
+    const form = document.getElementById("dish-form");
+
+    const fetchDishes = async () => {
+      const res = await fetch("/api/v1/dishes");
+      const data = await res.json();
+      tableBody.innerHTML = "";
+
+      data.forEach(dish => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${dish.name}</td>
+          <td>${dish.origin}</td>
+          <td>${dish.spiceLevel}</td>
+          <td>
+            <button onclick="deleteDish('${dish._id}')">Delete</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    };
+
+    const deleteDish = async (id) => {
+      if (confirm("Delete this dish?")) {
+        await fetch(`/api/v1/dishes/${id}`, { method: "DELETE" });
+        fetchDishes();
+      }
+    };
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form));
+      data.ingredients = data.ingredients.split(",").map(i => i.trim());
+      data.preparationSteps = data.preparationSteps.split(",").map(s => s.trim());
+
+      await fetch("/api/v1/dishes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      form.reset();
+      fetchDishes();
+    });
+
+    fetchDishes();
+  </script>
+</body>
+</html>
