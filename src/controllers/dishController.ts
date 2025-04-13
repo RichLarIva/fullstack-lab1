@@ -29,6 +29,27 @@ export const getDishByName = async (req: Request<{name : string}>, res: Response
     }
 }
 
+// Add a new dish
+export const addDish = async (req:Request, res: Response) => {
+    try 
+    {
+        const exists = await Dish.findOne({name: req.body.name});
+        if(exists)
+        {
+            return res.status(409).json({error: "Dish already eixsts!"});
+        }
+
+        const newDish = new Dish(req.body);
+        await newDish.save();
+        res.status(201).json(newDish);
+    }
+    catch(err)
+    {
+        res.status(500).json({error: "Failed to add dish"});
+    }
+};
+
+
 
 
 // Just a fun easter egg for testing and whatever
