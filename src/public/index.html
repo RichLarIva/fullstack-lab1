@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <title>Dish Recipes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles/style.css" />
 </head>
 <body>
   <h1>Dish Recipes</h1>
@@ -25,12 +27,43 @@
         <th>Actions</th>
       </tr>
     </thead>
-    <tbody></tbody>
+    <tbody>
+      <!-- Rows will be dynamically added here -->
+      <td>${dish.name}</td>
+      <td>${dish.origin}</td>
+      <td>${dish.spiceLevel}</td>
+      <td>
+        <button onclick="openEditModal('${dish._id}', '${dish.name}', '${dish.ingredients}', '${dish.preparationSteps}', '${dish.cookingTime}', '${dish.origin}', '${dish.spiceLevel}')">Edit</button>
+        <button onclick="deleteDish('${dish._id}')">Delete</button>
+      </td>
+    </tbody>
   </table>
+
+  <!-- Edit Modal -->
+  <div id="edit-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="close-modal">&times;</span>
+      <h2>Edit Dish</h2>
+      <form id="edit-form">
+        <input id="edit-name" placeholder="Name" name="name" required>
+        <input id="edit-ingredients" placeholder="Ingredients (comma separated)" name="ingredients" required>
+        <input id="edit-preparationSteps" placeholder="Steps (comma separated)" name="preparationSteps" required>
+        <input id="edit-cookingTime" placeholder="Cooking Time" name="cookingTime" required>
+        <input id="edit-origin" placeholder="Origin" name="origin" required>
+        <input id="edit-spiceLevel" placeholder="Spice Level" name="spiceLevel" required>
+        <button type="submit">Save Changes</button>
+      </form>
+    </div>
+  </div>
 
   <script>
     const tableBody = document.querySelector("#dish-table tbody");
     const form = document.getElementById("dish-form");
+    const editModal = document.getElementById("edit-modal");
+    const closeModal = document.getElementById("close-modal");
+    const editForm = document.getElementById("edit-form");
+
+    let currentDishId = null;
 
     const fetchDishes = async () => {
       const res = await fetch("/api/v1/dishes");
@@ -44,6 +77,7 @@
           <td>${dish.origin}</td>
           <td>${dish.spiceLevel}</td>
           <td>
+            <button onclick="openEditModal('${dish._id}', '${dish.name}', '${dish.ingredients}', '${dish.preparationSteps}', '${dish.cookingTime}', '${dish.origin}', '${dish.spiceLevel}')">Edit</button>
             <button onclick="deleteDish('${dish._id}')">Delete</button>
           </td>
         `;
@@ -57,6 +91,43 @@
         fetchDishes();
       }
     };
+
+    const openEditModal = (id, name, ingredients, preparationSteps, cookingTime, origin, spiceLevel) => {
+      currentDishId = id;
+      document.getElementById("edit-name").value = name;
+      document.getElementById("edit-ingredients").value = ingredients;
+      document.getElementById("edit-preparationSteps").value = preparationSteps;
+      document.getElementById("edit-cookingTime").value = cookingTime;
+      document.getElementById("edit-origin").value = origin;
+      document.getElementById("edit-spiceLevel").value = spiceLevel;
+      editModal.style.display = "block";
+    };
+
+    closeModal.onclick = () => {
+      editModal.style.display = "none";
+    };
+
+    window.onclick = (event) => {
+      if (event.target === editModal) {
+        editModal.style.display = "none";
+      }
+    };
+
+    editForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(editForm));
+      data.ingredients = data.ingredients.split(",").map(i => i.trim());
+      data.preparationSteps = data.preparationSteps.split(",").map(s => s.trim());
+
+      await fetch(`/api/v1/dishes/${currentDishId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      editModal.style.display = "none";
+      fetchDishes();
+    });
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
