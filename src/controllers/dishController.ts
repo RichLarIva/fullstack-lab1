@@ -49,8 +49,39 @@ export const addDish = async (req:Request, res: Response) => {
     }
 };
 
+//Update a dish by ID
+export const updateDish = async (req: Request<{ id: string }>, res: Response) => {
+    try 
+    {
+      const updated = await Dish.findByIdAndUpdate(req.params.id, req.body, { new: true });
+      if (!updated) 
+        {
+            return res.status(404).json({ error: "Dish not found" });
+        }
+      res.json(updated);
+    } 
+    catch (err) 
+    {
+      res.status(500).json({ error: "Failed to update dish" });
+    }
+  };
 
-
+// Delete a dish by ID
+export const deleteDish = async (req: Request<{ id: string }>, res: Response) => {
+    try 
+    {
+        const deleted = await Dish.findByIdAndDelete(req.params.id);
+        if(!deleted)
+        {
+            return res.status(404).json({error: "Dish not found"});
+        }
+        res.json({message: "Dish deleted"})
+    } 
+    catch (err) 
+    {
+        res.status(500).json({error:"Failed to delete dish"});
+    }
+}
 
 // Just a fun easter egg for testing and whatever
 export const imATeapot = (_req: Request, res: Response ) => {
