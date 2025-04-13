@@ -15,12 +15,13 @@ export const getAllDishes = async (_req: Request, res:Response) => {
 }
 
 // Get a dish by name
-export const getDishByName = async (req: Request<{name : string}>, res: Response) => {
+export const getDishByName = async (req: Request<{name : string}>, res: Response): Promise<void> => {
     try
     {
         const dish = await Dish.findOne({name:req.params.name})
         if(!dish)
-            return res.status(404).json({error: "Dish not found"});
+            res.status(404).json({error: "Dish not found"});
+            return;
         res.json(dish);
     }
     catch(err)
@@ -30,13 +31,14 @@ export const getDishByName = async (req: Request<{name : string}>, res: Response
 }
 
 // Add a new dish
-export const addDish = async (req:Request, res: Response) => {
+export const addDish = async (req:Request, res: Response): Promise<void> => {
     try 
     {
         const exists = await Dish.findOne({name: req.body.name});
         if(exists)
         {
-            return res.status(409).json({error: "Dish already eixsts!"});
+            res.status(409).json({error: "Dish already eixsts!"});
+            return;
         }
 
         const newDish = new Dish(req.body);
@@ -50,13 +52,14 @@ export const addDish = async (req:Request, res: Response) => {
 };
 
 //Update a dish by ID
-export const updateDish = async (req: Request<{ id: string }>, res: Response) => {
+export const updateDish = async (req: Request<{ id: string }>, res: Response): Promise<void> => {
     try 
     {
       const updated = await Dish.findByIdAndUpdate(req.params.id, req.body, { new: true });
       if (!updated) 
         {
-            return res.status(404).json({ error: "Dish not found" });
+            res.status(404).json({ error: "Dish not found" });
+            return;
         }
       res.json(updated);
     } 
@@ -67,13 +70,14 @@ export const updateDish = async (req: Request<{ id: string }>, res: Response) =>
   };
 
 // Delete a dish by ID
-export const deleteDish = async (req: Request<{ id: string }>, res: Response) => {
+export const deleteDish = async (req: Request<{ id: string }>, res: Response): Promise<void> => {
     try 
     {
         const deleted = await Dish.findByIdAndDelete(req.params.id);
         if(!deleted)
         {
-            return res.status(404).json({error: "Dish not found"});
+            res.status(404).json({error: "Dish not found"});
+            return;
         }
         res.json({message: "Dish deleted"})
     } 
@@ -84,7 +88,7 @@ export const deleteDish = async (req: Request<{ id: string }>, res: Response) =>
 }
 
 // Just a fun easter egg for testing and whatever
-export const imATeapot = (_req: Request, res: Response ) => {
+export const imATeapot = async (_req: Request, res: Response ): Promise<void> => {
     res.status(418).json({
         error: "I'm a teapot ☕",
         message: "This server is refusing to brew coffee because it is a teapot!",

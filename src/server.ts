@@ -17,10 +17,12 @@ app.use(express.json()); // Parse JSON in request body
 // Serve static HTML (for index.html)
 app.use(express.static(path.join(__dirname, "public")));
 
+
 // API route for dishes
 app.use("/api/v1/dishes", dishRoutes);
 
 // Start server after DB connection
-connectDB().then(() => {
-  app.listen(PORT, () => console.log(`🚀 Server running on address: https://127.0.0.1:${PORT}`));
+connectDB().then(() => 
+{
+  app.listen(PORT, () => console.log(`🚀 Server running on address: http://127.0.0.1:${PORT}`));
 });
