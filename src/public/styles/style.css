@@ -4,6 +4,13 @@
     box-sizing: border-box;
 }
 
+form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
 .modal
 {
     display: none; /* Hidden by default */
@@ -15,7 +22,7 @@
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
 }
 
 button{
@@ -35,9 +42,36 @@ button{
 button:hover
 {
     cursor:pointer;
-    width: 105%;
     font-size: 115%;
     font-weight: bolder;
+}
+
+table{
+    width: 90%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 18px;
+    text-align: left;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:hover{
+    background-color: #ddd;
+}
+
+th{
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+}
+
+table th, table td
+{
+    border: 1px solid #ddd;
+    padding: 8px;
 }
 
 .modal-content {

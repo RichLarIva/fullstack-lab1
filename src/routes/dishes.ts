@@ -18,6 +18,9 @@ const router = express.Router();
 // GET /api/dishes - Get all dishes
 router.get("/", getAllDishes);
 
+// GET /api/dishes/teapot - Fun Easter egg
+router.get("/teapot", imATeapot);
+
 // GET /api/dishes/:name - Get a single dish by name
 router.get("/:name", getDishByName);
 
@@ -30,7 +33,6 @@ router.put("/:id", updateDish);
 // DELETE /api/dishes/:id - Delete a dish by ID
 router.delete("/:id", deleteDish);
 
-// GET /api/dishes/teapot - Fun Easter egg
-router.get("/teapot", imATeapot);
+
 
 export default router;
