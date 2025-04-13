@@ -49,24 +49,9 @@
     </div>
   </div>
 
-  <!-- Recipe Modal -->
-  <div id="recipe-modal" class="modal">
-    <div class="modal-content">
-      <span class="close" id="close-recipe-modal">&times;</span>
-      <h2 id="recipe-name"></h2>
-      <p><strong>Ingredients:</strong> <span id="recipe-ingredients"></span></p>
-      <p><strong>Preparation Steps:</strong> <span id="recipe-steps"></span></p>
-      <p><strong>Cooking Time:</strong> <span id="recipe-cooking-time"></span></p>
-      <p><strong>Origin:</strong> <span id="recipe-origin"></span></p>
-      <p><strong>Spice Level:</strong> <span id="recipe-spice-level"></span></p>
-    </div>
-  </div>
-
   <script>
     const tableBody = document.querySelector("#dish-table tbody");
     const form = document.getElementById("dish-form");
-    const recipeModal = document.getElementById("recipe-modal");
-    const closeRecipeModal = document.getElementById("close-recipe-modal");
     const editModal = document.getElementById("edit-modal");
     const closeModal = document.getElementById("close-modal");
     const editForm = document.getElementById("edit-form");
@@ -81,7 +66,7 @@
       data.forEach(dish => {
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td><a href="#" onclick="openRecipeModal('${dish.name}')">${dish.name}</a></td>
+          <td>${dish.name}</td>
           <td>${dish.origin}</td>
           <td>${dish.spiceLevel}</td>
           <td>
@@ -91,24 +76,6 @@
         `;
         tableBody.appendChild(row);
       });
-    };
-
-    const openRecipeModal = async (name) => {
-      try {
-        const res = await fetch(`/api/v1/dishes/${name}`);
-        const dish = await res.json();
-
-        document.getElementById("recipe-name").textContent = dish.name;
-        document.getElementById("recipe-ingredients").textContent = dish.ingredients.join(", ");
-        document.getElementById("recipe-steps").textContent = dish.preparationSteps.join(", ");
-        document.getElementById("recipe-cooking-time").textContent = dish.cookingTime;
-        document.getElementById("recipe-origin").textContent = dish.origin;
-        document.getElementById("recipe-spice-level").textContent = dish.spiceLevel;
-
-        recipeModal.style.display = "block";
-      } catch (error) {
-        console.error("Error fetching recipe:", error);
-      }
     };
 
     const openEditModal = (id, name, ingredients, preparationSteps, cookingTime, origin, spiceLevel) => {
@@ -127,9 +94,6 @@
     };
 
     window.onclick = (event) => {
-      if (event.target === recipeModal) {
-        recipeModal.style.display = "none";
-      }
       if (event.target === editModal) {
         editModal.style.display = "none";
       }
